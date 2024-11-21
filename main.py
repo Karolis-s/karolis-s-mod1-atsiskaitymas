@@ -24,3 +24,5 @@ def gesintuvu_kainos(url: str, output_format: str):
 
     else:
         raise ValueError("Klaida")
+
+    #Padariau keleta pakeitimu
