@@ -15,8 +15,6 @@ def crawl(source, return_format='csv'):
         return save_as_csv(data)
     elif return_format == "dict":
         return data
-    elif return_format == "list":
-        return list(data.values())
     else:
         raise ValueError("Klaida")
 
@@ -44,19 +42,21 @@ def crawl_eurovaistine():
     response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")
 
-    product = soup.find("div", class_="brand")
+    products = []
+    product_elements = soup.find_all("div", class_="brand")
 
-    title = product.find("a", class_="brand").text.strip()
-    price = product.find("span", class_="newProductprice").text.strip()
+    for product in product_elements:
+        title_element = product.find("a", class_="brand").text.strip()
+        price_element = product.find("span", class_="newProductprice").text.strip()
 
-    return {"title": title, "price": price}
+    return products
 
 
 def save_as_csv(data):
 
     filename = "output.csv"
     with open(filename, mode='w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=data.keys())
+        writer = csv.DictWriter(csvfile, fieldnames = ())
         writer.writeheader()
         writer.writerow(data)
     return filename

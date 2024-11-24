@@ -1,5 +1,5 @@
-from karolis_s_mod1_atsiskaitymas import *
-from main import crawl_pigu, crawl_eurovaistine
+from karolis_s_mod1_atsiskaitymas.main import *
 
-rezultatas = crawl_pigu()
-print(rezultatas)
+data = crawl(source ="eurovaistine", return_format ="csv")
+
+print(data)
