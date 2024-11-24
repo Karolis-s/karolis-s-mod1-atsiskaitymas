@@ -1,8 +1,10 @@
-# Gesintuvų nuskaitymas iš gesinu.lt
+# Web Crawler
 
 ## Aprašymas
-Šis failas nuskaito gesintuvų pavadinimus ir kainas iš gesinu.lt
+Šis projektas leidžia nuskaityti duomenis iš tinklapių `lrytas.lt` ir `eurovaistine.lt`, grąžinant duomenis įvairiais formatais.
 
-## Instaliacija
+### Pavyzdys:
+```python
+from my_module.crawler import crawl
 
-pip install karolis_s_mod1_atsiskaitymas
+data = crawl(time_limit=60, source='lrytas', return_format='csv')

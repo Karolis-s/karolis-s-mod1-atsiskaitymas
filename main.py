@@ -1,28 +1,62 @@
 import requests
-from lxml import html
+from bs4 import BeautifulSoup
 import csv
 
-def gesintuvu_kainos(url: str, output_format: str):
-    response = requests.get(url)
-    responce.raise_for_status()
-    tree = html.fromstring(response.content)
+def crawl(source, return_format='csv'):
 
-    products = tree.xpath("//div[contains(@class, product-title)]/text()")
-    prices = [price.strip() for price in prices]
+    if source == "pigu":
+        data = crawl_pigu()
+    elif source == "eurovaistine":
+        data = crawl_eurovaistine()
+    else:
+        raise ValueError("Netinkamas tinklalapis")
 
-    if output_format == "dict":
-        return {"products": products, "prices": prices}
-    elif output_format == "list":
-        return list(products, prices)
-    elif output_format == "csv":
-        csv_file = "gesintuvai.csv"
-        with open(csv_file, "w", newline="", encoding = "utf - 8") as file:
-            writer = csv.writer(file)
-            writer.writerow(["Gesintuvas", "Kaina"])
-            writer.writerows(products, prices)
-        csv_file = "gesintuvai.csv"
-
+    if return_format == "csv":
+        return save_as_csv(data)
+    elif return_format == "dict":
+        return data
+    elif return_format == "list":
+        return list(data.values())
     else:
         raise ValueError("Klaida")
 
-    #Padariau keleta pakeitimu
+
+def crawl_pigu():
+
+    url = "https://pigu.lt/lt/kompiuterine-technika/kompiuteriu-komponentai/termo-pastos/"
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    product = soup.find("div", class_="site-block clearfix")
+    if not product:
+        return {"title": "No product found", "price": "N/A"}
+
+    title = product.find("a", class_="c-link--secondary").text.strip()
+    price = product.find("span", class_="c-price h-price--medium").text.strip()
+
+    return {"title": title, "price": price}
+
+def crawl_eurovaistine():
+
+    url = "https://www.eurovaistine.lt/kosmetika/"
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    product = soup.find("div", class_="brand")
+
+    title = product.find("a", class_="brand").text.strip()
+    price = product.find("span", class_="newProductprice").text.strip()
+
+    return {"title": title, "price": price}
+
+
+def save_as_csv(data):
+
+    filename = "output.csv"
+    with open(filename, mode='w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=data.keys())
+        writer.writeheader()
+        writer.writerow(data)
+    return filename
