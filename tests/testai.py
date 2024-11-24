@@ -1,5 +1,5 @@
 import unittest
-from main import *
+from karolis_s_mod1_atsiskaitymas.main import *
 
 class TestCrawl(unittest.TestCase):
 
