@@ -1,5 +1,4 @@
-from karolis_s_mod1_atsiskaitymas.main import *
+from karolis_s_mod1_atsikaitymas.main import crawl
 
-data = crawl(source ="eurovaistine", return_format ="csv")
-
+data = crawl('eurovaistine', 'dict')
 print(data)
