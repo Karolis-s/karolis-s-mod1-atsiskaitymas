@@ -1,9 +1,14 @@
-# Web Crawler
+Šis projektas leidžia nuskaityti produktų informaciją (pavadinimą ir kainą) iš `https://www.gintarine.lt/asmens-higiena-3`.
 
-## Aprašymas
-Šis projektas leidžia nuskaityti duomenis iš tinklapių pigu.lt ir eurovaistine.lt
+Naudojimas
 
-### Pavyzdys:
-from my_module.crawler import crawl
+from karolis_s_mod1_atsikaitymas.main import *
 
-data = crawl(time_limit=60, source='lrytas', return_format='csv')
+Nuskaitymas iš Gintarines vaistines puslapio
+
+from karolis_s_mod1_atsiskaitymas.main import *
+products = crawl_gintarine ()
+
+    for product in products:
+        print (f"Pavadinimas: {product['title']}")
+        print (f"Kaina: {product['price']}")

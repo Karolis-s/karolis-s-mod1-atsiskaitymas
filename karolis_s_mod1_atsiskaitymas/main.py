@@ -1,52 +1,45 @@
-import requests
-from lxml import html
+from requests import get
 from lxml.html import fromstring
 import csv
 
-def crawl(source, return_format='csv'):
+def crawl_gintarine():
 
-    if source == "eurovaistine":
-        data = crawl_eurovaistine()
-    else:
-        raise ValueError("Netinkamas tinklalapis")
+    response = get ("https://www.gintarine.lt/asmens-higiena-3")
+    response.raise_for_status ()
 
-    if return_format == "csv":
-        return save_as_csv(data)
-    elif return_format == "dict":
-        return data
-    elif return_format == "list":
-        return [list(item.values()) for item in data]
-    else:
-        raise ValueError("Klaida")
+    tree = fromstring (response.content)
 
+    products = tree.xpath ("//div[contains(@class, 'product-item')]")
 
-def crawl_eurovaistine():
-
-    url = "https://www.eurovaistine.lt/kosmetika/"
-    response = requests.get(url)
-    response.raise_for_status()
-
-    tree = html.fromstring(response.content)
-
-    products = tree.xpath ("//div[contains(@class, 'Content')]")
-
+    result = []
     for product in products:
+        title = product.xpath (".//input[@name='productName']/@value")
+        price = product.xpath (".//input[@name='productPrice']/@value")
 
-        titles = product.xpath (".//input[@name= 'title')]/@value")[0]
-        prices = product.xpath (".//input[@name= 'priceContainer')]/@value")[0]
+        if title and price:
+            result.append ({
+                "title": title[0].strip (),
+                "price": price[0].strip ()
+            })
+    return result
 
-        print (f"Product Name: {titles}")
-        print (f"Product Price: {prices}")
-
-    return products
-
-def save_as_csv(data):
-
-    filename = "output.csv"
+def save_as_csv(data, filename="output.csv"):
 
     with open(filename, mode='w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['title', 'priceContainer']
-        writer = csv.DictWriter(csvfile, fieldnames = fieldnames)
+        fieldnames = ['title', 'price']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerow(data)
+        writer.writerows(data)
     return filename
+
+if __name__ == "__main__":
+    products = crawl_gintarine ()
+
+    for product in products:
+        print (f"Pavadinimas: {product['title']}")
+        print (f"Kaina: {product['price']}")
+
+    csv_file = save_as_csv (products)
+    print (f"Produktai išsaugoti faile: {csv_file}")
+else:
+    print ("Klaida")
