@@ -34,12 +34,5 @@ def save_as_csv(data, filename="output.csv"):
 
 if __name__ == "__main__":
     products = crawl_gintarine ()
-
-    for product in products:
-        print (f"Pavadinimas: {product['title']}")
-        print (f"Kaina: {product['price']}")
-
     csv_file = save_as_csv (products)
     print (f"Produktai išsaugoti faile: {csv_file}")
-else:
-    print ("Klaida")
